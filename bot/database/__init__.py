@@ -1,0 +1,45 @@
+from bot.database.base import db
+from bot.database.models import (
+    AuditLog,
+    BotAdmin,
+    BotFSMState,
+    Client,
+    ServerAccess,
+    TrafficAlertConfig,
+    User,
+    UserClientAccess,
+    UserMessage,
+)
+from bot.database.repositories import (
+    AuditLogRepository,
+    BotAdminRepository,
+    ClientRepository,
+    FSMStateRepository,
+    ServerAccessRepository,
+    TrafficAlertConfigRepository,
+    UserClientAccessRepository,
+    UserMessageRepository,
+    UserRepository,
+)
+
+__all__ = [
+    "AuditLog",
+    "AuditLogRepository",
+    "BotAdmin",
+    "BotAdminRepository",
+    "BotFSMState",
+    "Client",
+    "ClientRepository",
+    "FSMStateRepository",
+    "ServerAccess",
+    "ServerAccessRepository",
+    "TrafficAlertConfig",
+    "TrafficAlertConfigRepository",
+    "User",
+    "UserClientAccess",
+    "UserClientAccessRepository",
+    "UserMessage",
+    "UserMessageRepository",
+    "UserRepository",
+    "db",
+]
