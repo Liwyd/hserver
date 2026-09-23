@@ -56,13 +56,13 @@ async def show_primary_ip_list(callback: CallbackQuery, client_id: int):
 
     builder.row(
         InlineKeyboardButton(
-            text="➕ Create IPv4",
+            text="+ Create IPv4",
             callback_data=create_callback(
                 CallbackAreas.PRIMARY_IP, CallbackTasks.CREATE, CallbackSteps.TYPE, 0, 0, client_id, "ipv4"
             ),
         ),
         InlineKeyboardButton(
-            text="➕ Create IPv6",
+            text="+ Create IPv6",
             callback_data=create_callback(
                 CallbackAreas.PRIMARY_IP, CallbackTasks.CREATE, CallbackSteps.TYPE, 0, 0, client_id, "ipv6"
             ),
@@ -465,13 +465,13 @@ async def show_floating_ip_list(callback: CallbackQuery, client_id: int):
 
     builder.row(
         InlineKeyboardButton(
-            text="➕ Create IPv4",
+            text="+ Create IPv4",
             callback_data=create_callback(
                 CallbackAreas.FLOATING_IP, CallbackTasks.CREATE, CallbackSteps.TYPE, 0, 0, client_id, "ipv4"
             ),
         ),
         InlineKeyboardButton(
-            text="➕ Create IPv6",
+            text="+ Create IPv6",
             callback_data=create_callback(
                 CallbackAreas.FLOATING_IP, CallbackTasks.CREATE, CallbackSteps.TYPE, 0, 0, client_id, "ipv6"
             ),

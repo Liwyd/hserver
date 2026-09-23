@@ -54,7 +54,7 @@ async def show_firewall_list(callback: CallbackQuery, client_id: int):
 
     builder.row(
         InlineKeyboardButton(
-            text="➕ Create Firewall",
+            text="+ Create Firewall",
             callback_data=create_callback(
                 CallbackAreas.FIREWALL, CallbackTasks.CREATE, CallbackSteps.REMARK, 0, 0, client_id
             ),
@@ -145,7 +145,7 @@ async def firewall_create_remark(callback: CallbackQuery, state: FSMContext):
 
 @router.message(FirewallCreateStates.waiting_remark)
 async def firewall_create_remark_received(message: Message, state: FSMContext):
-    valid, error = validate_remark(message.text)
+    valid, _ = validate_remark(message.text)
     if not valid:
         await message.answer(
             "⚠️❌ Invalid remark format. 🔍 Please enter a valid remark without special characters and space."
@@ -203,7 +203,7 @@ async def firewall_apply(callback: CallbackQuery):
     builder = InlineKeyboardBuilder()
     for server in servers:
         is_applied = server.id in applied_server_ids
-        prefix = "✅ " if is_applied else "➕ "
+        prefix = "✅ " if is_applied else "+ "
         builder.button(
             text=f"{prefix}{server.name} [{server.status}]",
             callback_data=create_callback(
@@ -328,7 +328,7 @@ async def firewall_edit_remark_received(message: Message, state: FSMContext):
     if not data.get("editing"):
         return
 
-    valid, error = validate_remark(message.text)
+    valid, _ = validate_remark(message.text)
     if not valid:
         await message.answer(
             "⚠️❌ Invalid remark format. 🔍 Please enter a valid remark without special characters and space."

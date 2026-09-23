@@ -9,13 +9,15 @@ from bot.hetzner.client import close_client, create_client
 
 network_app = typer.Typer(name="networks", help="Network management commands")
 
+CLIENT_ID_REQUIRED = "Client ID required. Use --client or set default."
+
 
 def get_client_id(ctx: typer.Context, client: int | None) -> int:
     if client:
         return client
     if ctx.obj.get("client_id"):
         return ctx.obj["client_id"]
-    raise typer.BadParameter("Client ID required. Use --client or set default.")
+    raise typer.BadParameter(CLIENT_ID_REQUIRED)
 
 
 @network_app.command("list")

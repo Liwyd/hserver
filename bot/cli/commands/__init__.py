@@ -11,6 +11,8 @@ from bot.cli.commands.snapshot import snapshot_app
 from bot.cli.commands.sshkey import sshkey_app
 from bot.cli.commands.volume import volume_app
 
+CLIENT_ID_REQUIRED = "Client ID required. Use --client or set default."
+
 __all__ = [
     "bot_app",
     "certificate_app",

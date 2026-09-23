@@ -18,6 +18,7 @@ from bot.states import (
     ServerCreateStates,
     ServerRebuildStates,
     ServerUpgradeStates,
+    SnapshotDeleteStates,
 )
 from bot.utils.callbacks import (
     CallbackAreas,
@@ -240,7 +241,7 @@ async def show_server_info(callback: CallbackQuery, client_id: int, server_id: i
             )
             builder.row(
                 InlineKeyboardButton(
-                    text="➕ Grant Access",
+                    text="+ Grant Access",
                     callback_data=create_callback(
                         CallbackAreas.SERVER, CallbackTasks.ACTION, "grant_access", 0, 0, server_id, str(client_id)
                     ),
@@ -364,7 +365,7 @@ async def server_create_remark(callback: CallbackQuery, state: FSMContext):
 
 @router.message(ServerCreateStates.waiting_remark)
 async def server_create_remark_received(message: Message, state: FSMContext):
-    valid, error = validate_remark(message.text)
+    valid, _ = validate_remark(message.text)
     if not valid:
         await message.answer(
             "⚠️❌ Invalid remark format. 🔍 Please enter a valid remark without special characters and space."
@@ -412,8 +413,6 @@ async def server_create_datacenter(callback: CallbackQuery, state: FSMContext):
     await state.update_data(datacenter_id=datacenter_id)
     await state.set_state(ServerCreateStates.waiting_plan)
 
-    data = await state.get_data()
-
     async with db.session() as session:
         client_repo = ClientRepository(session)
         client = await client_repo.get_by_id(client_id)
@@ -452,8 +451,6 @@ async def server_create_plan(callback: CallbackQuery, state: FSMContext):
 
     await state.update_data(server_type_id=server_type_id)
     await state.set_state(ServerCreateStates.waiting_image)
-
-    data = await state.get_data()
 
     async with db.session() as session:
         client_repo = ClientRepository(session)
@@ -665,7 +662,10 @@ async def server_action(callback: CallbackQuery, state: FSMContext):
         ),
     )
 
-    text = f"❓ Are you sure you want to {ACTION_MESSAGES[action].lower()}?\n🔘 Please approve to continue or cancel to go back."
+    text = (
+        f"❓ Are you sure you want to {ACTION_MESSAGES[action].lower()}?\n"
+        f"🔘 Please approve to continue or cancel to go back."
+    )
     await callback.message.edit_text(text, reply_markup=builder.as_markup())
     await callback.answer()
 
@@ -898,7 +898,8 @@ async def handle_special_action(
             for access in accesses:
                 user = await user_repo.get_by_id(access.user_id)
                 if user:
-                    text += f"• {user.telegram_id} — {user.first_name or ''} {user.last_name or ''} [{'env' if user.is_bot_admin else 'bot'}]\n"
+                    source = "env" if user.is_bot_admin else "bot"
+                    text += f"• {user.telegram_id} — {user.first_name or ''} {user.last_name or ''} [{source}]\n"
 
             builder = InlineKeyboardBuilder()
             builder.row(
@@ -1306,7 +1307,7 @@ async def server_edit_remark_received(message: Message, state: FSMContext):
     if not data.get("editing"):
         return
 
-    valid, error = validate_remark(message.text)
+    valid, _ = validate_remark(message.text)
     if not valid:
         await message.answer(
             "⚠️❌ Invalid remark format. 🔍 Please enter a valid remark without special characters and space."

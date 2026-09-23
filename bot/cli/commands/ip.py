@@ -10,13 +10,15 @@ from bot.hetzner.client import close_client, create_client
 primary_ip_app = typer.Typer(name="primary-ips", help="Primary IP management commands")
 floating_ip_app = typer.Typer(name="floating-ips", help="Floating IP management commands")
 
+CLIENT_ID_REQUIRED = "Client ID required. Use --client or set default."
+
 
 def get_client_id(ctx: typer.Context, client: int | None) -> int:
     if client:
         return client
     if ctx.obj.get("client_id"):
         return ctx.obj["client_id"]
-    raise typer.BadParameter("Client ID required. Use --client or set default.")
+    raise typer.BadParameter(CLIENT_ID_REQUIRED)
 
 
 # Primary IPs

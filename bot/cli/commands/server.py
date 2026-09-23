@@ -10,13 +10,15 @@ from bot.hetzner.models import ServerCreateRequest
 
 server_app = typer.Typer(name="servers", help="Server management commands")
 
+CLIENT_ID_REQUIRED = "Client ID required. Use --client or set default."
+
 
 def get_client_id(ctx: typer.Context, client: int | None) -> int:
     if client:
         return client
     if ctx.obj.get("client_id"):
         return ctx.obj["client_id"]
-    raise typer.BadParameter("Client ID required. Use --client or set default.")
+    raise typer.BadParameter(CLIENT_ID_REQUIRED)
 
 
 @server_app.command("list")
@@ -132,10 +134,9 @@ def server_delete(
     async def _delete():
         client_id = get_client_id(ctx, client)
 
-        if not yes:
-            if not cli_output.confirm(f"Delete server {server_id}?"):
-                cli_output.print_warning("Cancelled")
-                return
+        if not yes and not cli_output.confirm(f"Delete server {server_id}?"):
+            cli_output.print_warning("Cancelled")
+            return
 
         async with db.session() as session:
             client_repo = ClientRepository(session)

@@ -1,4 +1,3 @@
-
 from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import Confirm
@@ -21,16 +20,16 @@ class CLIOutput:
         console.print(panel)
 
     def print_success(self, msg: str):
-        console.print(f"[green]✅ {msg}[/green]")
+        console.print(f"[green][OK] {msg}[/green]")
 
     def print_error(self, msg: str):
-        console.print(f"[red]❌ {msg}[/red]")
+        console.print(f"[red][ERROR] {msg}[/red]")
 
     def print_warning(self, msg: str):
-        console.print(f"[yellow]⚠️ {msg}[/yellow]")
+        console.print(f"[yellow][WARN] {msg}[/yellow]")
 
     def print_info(self, msg: str):
-        console.print(f"[blue]ℹ️ {msg}[/blue]")
+        console.print(f"[blue][INFO] {msg}[/blue]")
 
     def confirm(self, prompt: str) -> bool:
         return Confirm.ask(f"[yellow]{prompt}[/yellow]")

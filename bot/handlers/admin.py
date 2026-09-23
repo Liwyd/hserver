@@ -62,7 +62,7 @@ async def admin_list(callback: CallbackQuery):
         builder.adjust(1)
         builder.row(
             InlineKeyboardButton(
-                text="➕ Add Admin",
+                text="+ Add Admin",
                 callback_data=create_callback(CallbackAreas.ADMIN, CallbackTasks.CREATE, CallbackSteps.CHAT_ID),
             ),
         )
@@ -164,7 +164,7 @@ async def admin_list_message(message: Message):
         builder.adjust(1)
         builder.row(
             InlineKeyboardButton(
-                text="➕ Add Admin",
+                text="+ Add Admin",
                 callback_data=create_callback(CallbackAreas.ADMIN, CallbackTasks.CREATE, CallbackSteps.CHAT_ID),
             ),
         )

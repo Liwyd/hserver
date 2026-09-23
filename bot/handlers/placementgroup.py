@@ -56,7 +56,7 @@ async def show_placementgroup_list(callback: CallbackQuery, client_id: int):
 
     builder.row(
         InlineKeyboardButton(
-            text="➕ Create Placement Group",
+            text="+ Create Placement Group",
             callback_data=create_callback(
                 CallbackAreas.PLACEMENTGROUP, CallbackTasks.CREATE, CallbackSteps.NAME, 0, 0, client_id
             ),
@@ -131,7 +131,7 @@ async def placementgroup_create_name(callback: CallbackQuery, state: FSMContext)
 
 @router.message(PlacementGroupCreateStates.waiting_name)
 async def placementgroup_create_name_received(message: Message, state: FSMContext):
-    valid, error = validate_remark(message.text)
+    valid, _ = validate_remark(message.text)
     if not valid:
         await message.answer(
             "⚠️❌ Invalid name format. 🔍 Please enter a valid name without special characters and space."
@@ -238,7 +238,7 @@ async def placementgroup_edit_remark_received(message: Message, state: FSMContex
     if not data.get("editing"):
         return
 
-    valid, error = validate_remark(message.text)
+    valid, _ = validate_remark(message.text)
     if not valid:
         await message.answer(
             "⚠️❌ Invalid remark format. 🔍 Please enter a valid remark without special characters and space."

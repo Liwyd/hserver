@@ -56,7 +56,7 @@ async def show_snapshot_list(callback: CallbackQuery, client_id: int):
 
     builder.row(
         InlineKeyboardButton(
-            text="➕ Create Snapshot",
+            text="+ Create Snapshot",
             callback_data=create_callback(
                 CallbackAreas.SNAPSHOT, CallbackTasks.CREATE, CallbackSteps.REMARK, 0, 0, client_id
             ),
@@ -131,7 +131,7 @@ async def snapshot_create_remark(callback: CallbackQuery, state: FSMContext):
 
 @router.message(SnapshotCreateStates.waiting_remark)
 async def snapshot_create_remark_received(message: Message, state: FSMContext):
-    valid, error = validate_remark(message.text)
+    valid, _ = validate_remark(message.text)
     if not valid:
         await message.answer(
             "⚠️❌ Invalid remark format. 🔍 Please enter a valid remark without special characters and space."
@@ -225,7 +225,7 @@ async def snapshot_edit_remark_received(message: Message, state: FSMContext):
     if not data.get("editing"):
         return
 
-    valid, error = validate_remark(message.text)
+    valid, _ = validate_remark(message.text)
     if not valid:
         await message.answer(
             "⚠️❌ Invalid remark format. 🔍 Please enter a valid remark without special characters and space."

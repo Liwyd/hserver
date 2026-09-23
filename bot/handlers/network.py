@@ -54,7 +54,7 @@ async def show_network_list(callback: CallbackQuery, client_id: int):
 
     builder.row(
         InlineKeyboardButton(
-            text="➕ Create Network",
+            text="+ Create Network",
             callback_data=create_callback(
                 CallbackAreas.NETWORK, CallbackTasks.CREATE, CallbackSteps.REMARK, 0, 0, client_id
             ),
@@ -96,7 +96,7 @@ async def network_info(callback: CallbackQuery):
     )
     builder.row(
         InlineKeyboardButton(
-            text="➕ Add Subnet",
+            text="+ Add Subnet",
             callback_data=create_callback(
                 CallbackAreas.NETWORK, CallbackTasks.ACTION, "add_subnet", 0, 0, network_id, str(client_id)
             ),
@@ -110,7 +110,7 @@ async def network_info(callback: CallbackQuery):
     )
     builder.row(
         InlineKeyboardButton(
-            text="➕ Add Route",
+            text="+ Add Route",
             callback_data=create_callback(
                 CallbackAreas.NETWORK, CallbackTasks.ACTION, "add_route", 0, 0, network_id, str(client_id)
             ),
@@ -159,7 +159,7 @@ async def network_create_remark(callback: CallbackQuery, state: FSMContext):
 
 @router.message(NetworkCreateStates.waiting_remark)
 async def network_create_remark_received(message: Message, state: FSMContext):
-    valid, error = validate_remark(message.text)
+    valid, _ = validate_remark(message.text)
     if not valid:
         await message.answer(
             "⚠️❌ Invalid remark format. 🔍 Please enter a valid remark without special characters and space."
@@ -301,7 +301,7 @@ async def show_network_info(callback: CallbackQuery, client_id: int, network_id:
     )
     builder.row(
         InlineKeyboardButton(
-            text="➕ Add Subnet",
+            text="+ Add Subnet",
             callback_data=create_callback(
                 CallbackAreas.NETWORK, CallbackTasks.ACTION, "add_subnet", 0, 0, network_id, str(client_id)
             ),
@@ -315,7 +315,7 @@ async def show_network_info(callback: CallbackQuery, client_id: int, network_id:
     )
     builder.row(
         InlineKeyboardButton(
-            text="➕ Add Route",
+            text="+ Add Route",
             callback_data=create_callback(
                 CallbackAreas.NETWORK, CallbackTasks.ACTION, "add_route", 0, 0, network_id, str(client_id)
             ),
@@ -353,7 +353,7 @@ async def show_network_info(callback: CallbackQuery, client_id: int, network_id:
 
 
 @router.callback_query(F.data.startswith(f"{CallbackAreas.NETWORK}:{CallbackTasks.ACTION}:delete_subnet"))
-async def network_delete_subnet(callback: CallbackQuery, state: FSMContext):
+async def network_delete_subnet(callback: CallbackQuery, _state: FSMContext):
     cb = parse_callback(callback.data)
     network_id = cb.target_id
     client_id = int(cb.extra) if cb.extra else 0
@@ -482,7 +482,7 @@ async def network_add_route_received(message: Message, state: FSMContext):
 
 
 @router.callback_query(F.data.startswith(f"{CallbackAreas.NETWORK}:{CallbackTasks.ACTION}:delete_route"))
-async def network_delete_route(callback: CallbackQuery, state: FSMContext):
+async def network_delete_route(callback: CallbackQuery, _state: FSMContext):
     cb = parse_callback(callback.data)
     network_id = cb.target_id
     client_id = int(cb.extra) if cb.extra else 0
@@ -611,7 +611,7 @@ async def network_edit_remark_received(message: Message, state: FSMContext):
     if not data.get("editing"):
         return
 
-    valid, error = validate_remark(message.text)
+    valid, _ = validate_remark(message.text)
     if not valid:
         await message.answer(
             "⚠️❌ Invalid remark format. 🔍 Please enter a valid remark without special characters and space."

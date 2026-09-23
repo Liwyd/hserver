@@ -1,20 +1,21 @@
-
 import typer
 
-from bot.cli.main import cli_output, run_async
-from bot.database.base import db
-from bot.database.repositories import ClientRepository
-from bot.encryption import decrypt_token
-from bot.hetzner.client import close_client, create_client
+CLIENT_ID_REQUIRED = "Client ID required. Use --client or set default."
 
 bot_app = typer.Typer(name="bot", help="Bot management commands")
 
 
 @bot_app.command("status")
-def bot_status(ctx: typer.Context):
+def bot_status(_ctx: typer.Context):
     """Show connection status, list all clients, show resource counts"""
 
     async def _status():
+        from bot.cli.main import cli_output
+        from bot.database.base import db
+        from bot.database.repositories import ClientRepository
+        from bot.encryption import decrypt_token
+        from bot.hetzner.client import close_client, create_client
+
         async with db.session() as session:
             client_repo = ClientRepository(session)
             clients = await client_repo.list_all()
@@ -40,19 +41,23 @@ def bot_status(ctx: typer.Context):
 
                     cli_output.print_panel(
                         f"Account Summary - {client.remark}",
-                        f"Servers: {len(servers)} | Primary IPs: {len(primary_ips)} | Volumes: {len(volumes)} | Networks: {len(networks)} | SSH Keys: {len(ssh_keys)}",
+                        f"Servers: {len(servers)} | Primary IPs: {len(primary_ips)} "
+                        f"| Volumes: {len(volumes)} | Networks: {len(networks)} "
+                        f"| SSH Keys: {len(ssh_keys)}",
                     )
                 except Exception:
                     cli_output.print_error(f"Failed to connect to {client.remark}")
                 finally:
                     await close_client(hetzner_client)
 
+    from bot.cli.main import run_async
     run_async(_status())
 
 
 @bot_app.command("update")
 def bot_update():
     """Update the bot (pulls latest, rebuilds Docker, runs migrations)"""
+    from bot.cli.main import cli_output
     cli_output.print_info("Update functionality runs via the update.sh script")
     cli_output.print_info("Run: sudo /opt/servermanagerbot/scripts/update.sh")
 
@@ -60,6 +65,7 @@ def bot_update():
 @bot_app.command("restart")
 def bot_restart():
     """Restart bot services"""
+    from bot.cli.main import cli_output
     cli_output.print_info("Restart functionality runs via Docker Compose")
     cli_output.print_info("Run: docker compose -f /opt/servermanagerbot/docker/docker-compose.yml restart")
 
@@ -67,6 +73,7 @@ def bot_restart():
 @bot_app.command("stop")
 def bot_stop():
     """Stop bot services"""
+    from bot.cli.main import cli_output
     cli_output.print_info("Stop functionality runs via Docker Compose")
     cli_output.print_info("Run: docker compose -f /opt/servermanagerbot/docker/docker-compose.yml stop")
 
@@ -74,6 +81,7 @@ def bot_stop():
 @bot_app.command("start")
 def bot_start():
     """Start bot services"""
+    from bot.cli.main import cli_output
     cli_output.print_info("Start functionality runs via Docker Compose")
     cli_output.print_info("Run: docker compose -f /opt/servermanagerbot/docker/docker-compose.yml start")
 
@@ -84,23 +92,27 @@ def bot_logs(
     lines: int = typer.Option(100, "-n", "--lines", help="Number of lines"),
 ):
     """Follow logs"""
+    from bot.cli.main import cli_output
     cli_output.print_info("Logs functionality runs via Docker Compose")
     cli_output.print_info(
-        f"Run: docker compose -f /opt/servermanagerbot/docker/docker-compose.yml logs {'-f' if follow else ''} --tail={lines}"
+        f"Run: docker compose -f /opt/servermanagerbot/docker/docker-compose.yml "
+        f"logs {'-f' if follow else ''} --tail={lines}"
     )
 
 
 @bot_app.command("install")
 def bot_install():
     """Install the bot from scratch"""
+    from bot.cli.main import cli_output
     cli_output.print_info("Install functionality runs via the install.sh script")
     cli_output.print_info("Run: sudo /opt/servermanagerbot/scripts/install.sh")
 
 
 @bot_app.command("uninstall")
 def bot_uninstall(
-    confirm: bool = typer.Option(False, "--yes", "-y", help="Skip confirmation"),
+    _confirm: bool = typer.Option(False, "--yes", "-y", help="Skip confirmation"),
 ):
     """Remove the bot"""
+    from bot.cli.main import cli_output
     cli_output.print_info("Uninstall functionality runs via the uninstall.sh script")
     cli_output.print_info("Run: sudo /opt/servermanagerbot/scripts/uninstall.sh")

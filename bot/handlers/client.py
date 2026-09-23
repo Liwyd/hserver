@@ -1,3 +1,5 @@
+import hashlib
+
 from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, InlineKeyboardButton, Message
@@ -115,7 +117,7 @@ async def client_create_remark(callback: CallbackQuery, state: FSMContext):
 
 @router.message(ClientCreateStates.waiting_remark)
 async def client_create_remark_received(message: Message, state: FSMContext):
-    valid, error = validate_remark(message.text)
+    valid, _ = validate_remark(message.text)
     if not valid:
         await message.answer(
             "⚠️❌ Invalid remark format. 🔍 Please enter a valid remark without special characters and space."
@@ -211,7 +213,7 @@ async def client_edit_remark(callback: CallbackQuery, state: FSMContext):
 
 @router.message(ClientSettingsStates.waiting_new_remark)
 async def client_edit_remark_received(message: Message, state: FSMContext):
-    valid, error = validate_remark(message.text)
+    valid, _ = validate_remark(message.text)
     if not valid:
         await message.answer(
             "⚠️❌ Invalid remark format. 🔍 Please enter a valid remark without special characters and space."
@@ -314,5 +316,3 @@ async def client_delete_confirm(callback: CallbackQuery):
     await callback.answer()
     await show_client_menu(callback)
 
-
-import hashlib

@@ -81,7 +81,7 @@ class ClientRepository:
     async def list_all(self, active_only: bool = True) -> list[Client]:
         query = select(Client)
         if active_only:
-            query = query.where(Client.is_active == True)
+            query = query.where(Client.is_active)
         query = query.order_by(Client.remark)
         result = await self.session.execute(query)
         return list(result.scalars().all())
@@ -92,7 +92,7 @@ class ClientRepository:
         query = (
             select(Client)
             .join(UserClientAccess, UserClientAccess.client_id == Client.id)
-            .where(UserClientAccess.user_id == user.id, Client.is_active == True)
+            .where(UserClientAccess.user_id == user.id, Client.is_active)
             .order_by(Client.remark)
         )
         result = await self.session.execute(query)

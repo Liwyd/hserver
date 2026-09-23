@@ -1,5 +1,6 @@
-
+# ruff: noqa: I001
 import typer
+from pathlib import Path
 
 from bot.cli.main import cli_output, run_async
 from bot.database.base import db
@@ -9,13 +10,15 @@ from bot.hetzner.client import close_client, create_client
 
 certificate_app = typer.Typer(name="certificates", help="Certificate management commands")
 
+CLIENT_ID_REQUIRED = "Client ID required. Use --client or set default."
+
 
 def get_client_id(ctx: typer.Context, client: int | None) -> int:
     if client:
         return client
     if ctx.obj.get("client_id"):
         return ctx.obj["client_id"]
-    raise typer.BadParameter("Client ID required. Use --client or set default.")
+    raise typer.BadParameter(CLIENT_ID_REQUIRED)
 
 
 @certificate_app.command("list")
@@ -73,10 +76,8 @@ def certificate_create(
     async def _create():
         client_id = get_client_id(ctx, client)
 
-        with open(cert_file) as f:
-            cert_pem = f.read()
-        with open(key_file) as f:
-            key_pem = f.read()
+        cert_pem = Path(cert_file).read_text()
+        key_pem = Path(key_file).read_text()
 
         async with db.session() as session:
             client_repo = ClientRepository(session)
@@ -133,7 +134,7 @@ def certificate_delete(
     async def _delete():
         client_id = get_client_id(ctx, client)
         if not yes and not cli_output.confirm(f"Delete certificate {cert_id}?"):
-            cli_output.print_warning("Cancelled")
+            cli_output.print_info("Cancelled")
             return
 
         async with db.session() as session:

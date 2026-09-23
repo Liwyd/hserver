@@ -56,7 +56,7 @@ async def show_loadbalancer_list(callback: CallbackQuery, client_id: int):
 
     builder.row(
         InlineKeyboardButton(
-            text="➕ Create Load Balancer",
+            text="+ Create Load Balancer",
             callback_data=create_callback(
                 CallbackAreas.LOADBALANCER, CallbackTasks.CREATE, CallbackSteps.REMARK, 0, 0, client_id
             ),
@@ -147,7 +147,7 @@ async def loadbalancer_create_remark(callback: CallbackQuery, state: FSMContext)
 
 @router.message(LoadBalancerCreateStates.waiting_remark)
 async def loadbalancer_create_remark_received(message: Message, state: FSMContext):
-    valid, error = validate_remark(message.text)
+    valid, _ = validate_remark(message.text)
     if not valid:
         await message.answer(
             "⚠️❌ Invalid remark format. 🔍 Please enter a valid remark without special characters and space."
@@ -156,6 +156,8 @@ async def loadbalancer_create_remark_received(message: Message, state: FSMContex
 
     await state.update_data(remark=message.text)
     await state.set_state(LoadBalancerCreateStates.waiting_type)
+
+    data = await state.get_data()
 
     async with db.session() as session:
         client_repo = ClientRepository(session)
@@ -554,7 +556,7 @@ async def loadbalancer_edit_remark_received(message: Message, state: FSMContext)
     if not data.get("editing"):
         return
 
-    valid, error = validate_remark(message.text)
+    valid, _ = validate_remark(message.text)
     if not valid:
         await message.answer(
             "⚠️❌ Invalid remark format. 🔍 Please enter a valid remark without special characters and space."

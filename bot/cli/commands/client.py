@@ -7,6 +7,8 @@ from bot.database.repositories import ClientRepository
 from bot.encryption import decrypt_token, encrypt_token
 from bot.hetzner.client import close_client, create_client
 
+CLIENT_ID_REQUIRED = "Client ID required. Use --client or set default."
+
 client_app = typer.Typer(name="clients", help="Client management commands")
 
 
@@ -35,7 +37,9 @@ def client_get(client_id: int):
 
         cli_output.print_panel(
             f"Client {client.remark}",
-            f"ID: {client.id}\nRemark: {client.remark}\nToken: {cli_output.mask_token(decrypt_token(client.api_token_encrypted))}\nActive: {client.is_active}",
+            f"ID: {client.id}\nRemark: {client.remark}\n"
+            f"Token: {cli_output.mask_token(decrypt_token(client.api_token_encrypted))}\n"
+            f"Active: {client.is_active}",
         )
 
     run_async(_get())

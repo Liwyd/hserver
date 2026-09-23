@@ -3,7 +3,9 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, InlineKeyboardButton, Message
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from bot.database.repositories import BotAdminRepository, ClientRepository
+from bot.config import get_settings
+from bot.database.base import db
+from bot.database.repositories import BotAdminRepository, ClientRepository, UserRepository
 from bot.utils.callbacks import CallbackAreas, CallbackSteps, CallbackTasks, create_callback
 from bot.utils.formatters import format_client_button
 
@@ -11,9 +13,6 @@ router = Router()
 
 
 async def show_home_screen(message: Message):
-    from bot.config import get_settings
-    from bot.database.base import db
-
     settings = get_settings()
     user_id = message.from_user.id
 
@@ -28,37 +27,37 @@ async def show_home_screen(message: Message):
 
         clients = await client_repo.list_all(active_only=True) if is_admin else await client_repo.list_for_user(user)
 
-        builder = InlineKeyboardBuilder()
+    builder = InlineKeyboardBuilder()
 
-        for client in clients:
-            builder.button(
-                text=format_client_button(client),
-                callback_data=create_callback(CallbackAreas.CLIENT, CallbackTasks.LIST, "", 0, 0, client.id),
-            )
-
-        builder.adjust(2)
-
-        if is_admin:
-            builder.row(
-                InlineKeyboardButton(
-                    text="🆕 Create Client",
-                    callback_data=create_callback(CallbackAreas.CLIENT, CallbackTasks.CREATE, CallbackSteps.REMARK),
-                ),
-                InlineKeyboardButton(
-                    text="👑 Admins",
-                    callback_data=create_callback(CallbackAreas.ADMIN, CallbackTasks.LIST),
-                ),
-            )
-
-        builder.row(
-            InlineKeyboardButton(
-                text="🌚 Owner",
-                url="https://t.me/your_channel",
-            )
+    for client in clients:
+        builder.button(
+            text=format_client_button(client),
+            callback_data=create_callback(CallbackAreas.CLIENT, CallbackTasks.LIST, "", 0, 0, client.id),
         )
 
-        text = "🌟 Welcome! I'm your Server Management Assistant"
-        await message.answer(text, reply_markup=builder.as_markup())
+    builder.adjust(2)
+
+    if is_admin:
+        builder.row(
+            InlineKeyboardButton(
+                text="🆕 Create Client",
+                callback_data=create_callback(CallbackAreas.CLIENT, CallbackTasks.CREATE, CallbackSteps.REMARK),
+            ),
+            InlineKeyboardButton(
+                text="👑 Admins",
+                callback_data=create_callback(CallbackAreas.ADMIN, CallbackTasks.LIST),
+            ),
+        )
+
+    builder.row(
+        InlineKeyboardButton(
+            text="🌚 Owner",
+            url="https://t.me/your_channel",
+        )
+    )
+
+    text = "🌟 Welcome! I'm your Server Management Assistant"
+    await message.answer(text, reply_markup=builder.as_markup())
 
 
 @router.callback_query(F.data.startswith("home"))
@@ -67,6 +66,3 @@ async def callback_home(callback: CallbackQuery, state: FSMContext):
     await callback.message.edit_text("🌟 Welcome! I'm your Server Management Assistant")
     await show_home_screen(callback.message)
     await callback.answer()
-
-
-from bot.database.repositories import UserRepository
